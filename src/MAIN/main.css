@@ -186,7 +186,7 @@ header button:active
     display: flex;
     flex: 1;
     height: 100%;
-    background-color:#000211;
+    background-color:#1C293A;
     flex-direction: column;
 
     gap: 10px;

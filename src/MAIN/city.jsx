@@ -47,9 +47,9 @@ export const UrlFinder = async (type) => {
   return url;
 };
 
-export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiResponse, setVari, type, fetchUrl) => {
+export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiResponse, setVari, type, UrlFinder) => {
   try {
-    const url = await fetchUrl(type);
+    const url = await UrlFinder(type);
     if (!url) return setError("Enter the name of the place");
 
     const response = await fetch(url);
@@ -67,6 +67,7 @@ export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiRe
     const weatherURL = `http://api.weatherapi.com/v1/forecast.json?key=453b48bde3544a35b6683930252803&q=${fetchedPlace.lat},${fetchedPlace.lng}&days=7&aqi=yes&alerts=no`;
     const weatherResponse = await fetch(weatherURL);
     const weatherData = await weatherResponse.json();
+    console.log(weatherData)
     setWeatherInfo(weatherData);
     setVari(extractNumber(weatherData.current.last_updated.split(" ")[1].split(":"))[0]);
 
@@ -107,10 +108,10 @@ const City = ({ handleOpac }) => {
                 <h2>{place.adminName1}</h2>
               </div>
               <div className="data_sec">
-                <div className="population"><FontAwesomeIcon icon={faPeopleGroup} /><span>{place.population}</span></div>
-                <div className="Country"><FontAwesomeIcon icon={faGlobe} /><span>{place.countryName}</span></div>
-                <div className="Longitude"><FontAwesomeIcon icon={faLocation} /><span>{place.lng}</span></div>
-                <div className="Latitude"><FontAwesomeIcon icon={faLocation} /><span>{place.lat}</span></div>
+                <div className="population"> <div className="M_data">Population</div><FontAwesomeIcon icon={faPeopleGroup} /><span>{place.population}</span></div>
+                <div className="Country"> <div className="M_data">Country</div><FontAwesomeIcon icon={faGlobe} /><span>{place.countryName}</span></div>
+                <div className="Longitude"> <div className="M_data">longitude</div><FontAwesomeIcon icon={faLocation} /><span>{place.lng}</span></div>
+                <div className="Latitude"> <div className="M_data">latitude</div><FontAwesomeIcon icon={faLocation} /><span>{place.lat}</span></div>
               </div>
             </>
           )}
@@ -120,7 +121,7 @@ const City = ({ handleOpac }) => {
         {place && <div className="fact_info"><h1>Fun Fact</h1><p>{aiResponse}</p></div>}
         {place && (
           <div className='map'>
-            <iframe className="foot_frame" src={`https://www.openstreetmap.org/export/embed.html?bbox=${place.lng - 0.01},${place.lat - 0.01},${place.lng + 0.01},${place.lat + 0.01}&layer=mapnik&marker=${place.lat},${place.lng}`}></iframe>
+            <iframe className="foot_frame" src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(place.lng) - 0.01},${Number(place.lat) - 0.01},${Number(place.lng) + 0.01},${Number(place.lat) + 0.01}&layer=mapnik&marker=${place.lat},${place.lng}`}></iframe>
             <small><a href={`https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lng}#map=12/${place.lat}/${place.lng}&layers=N`}>View Larger Map</a></small>
           </div>
         )}
