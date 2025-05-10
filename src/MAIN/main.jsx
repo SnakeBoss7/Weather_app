@@ -2,7 +2,7 @@ import React from 'react';
 import Home from './home';
 import City, { PlaceProvider } from './city';
 import Setting from './setting';
-
+import './main.css';
 
 const Main = ({ selectedOption ,handleOpac}) => {
         const renderComponent = () => {

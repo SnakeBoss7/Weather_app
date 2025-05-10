@@ -4,7 +4,18 @@ html,body
   background-color: #000211;
   height: 100%;
   position: relative;
+
+
+
+    touch-action: pan-x pan-y;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+
+
 }
+
 *
 {
   color: white;
@@ -13,14 +24,13 @@ html,body
   box-sizing: border-box;
   user-select: none;
   -webkit-user-select: none;
-
+    -webkit-tap-highlight-color: transparent;
 }
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
+input, textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
-
 
 .App {
   text-align: center;
@@ -35,19 +45,27 @@ html {
 /* media */
 @media (max-width: 800px)
 {
-  /* .App{
+   .App{
         text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    padding: 10px;
-    gap: 10px;
-  }
-  .App > *
-  {
-    flex: none;
+
+
   }
 
-   */
+}
+@media screen and (max-width: 768px) {
+  .App {
+    padding: 5px;
+    gap: 5px;
+  }
+  
+  /* Adjust other responsive styles as needed */
+}
+
+@media screen and (max-width: 480px) {
+  .App {
+    padding: 3px;
+    gap: 3px;
+  }
+  
+  /* Further adjustments for smaller screens */
 }

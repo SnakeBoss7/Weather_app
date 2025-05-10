@@ -11,9 +11,10 @@ export const PlaceProvider = ({ children }) => {
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [aiResponse, setAiResponse] = useState(null);
   const [vari, setVari] = useState(null);
+  const [faren, setfaren] = useState(false);
   
   return (
-    <PlaceContext.Provider value={{ place, setPlace, weatherInfo, setWeatherInfo, aiResponse, setAiResponse, vari, setVari }}>
+    <PlaceContext.Provider value={{ place, setPlace, weatherInfo, setWeatherInfo, aiResponse, setAiResponse, vari, setVari,faren,setfaren }}>
       {children}
     </PlaceContext.Provider>
   );
@@ -80,14 +81,14 @@ export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiRe
 };
 
 const City = ({ handleOpac }) => {
-  const { place, setPlace, weatherInfo, setWeatherInfo, aiResponse, setAiResponse, vari, setVari } = usePlace();
+  const { place, setPlace, setWeatherInfo, aiResponse, setAiResponse,setVari } = usePlace();
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (place) {
       queryTogetherAI(`Tell me the most shocking fact about ${place.name} in ${place.adminName1} in 30 words`).then(setAiResponse);
     }
-  }, [place]);
+  }, [place, setAiResponse]);
 
   return (
     <div className="main_container">
@@ -108,10 +109,10 @@ const City = ({ handleOpac }) => {
                 <h2>{place.adminName1}</h2>
               </div>
               <div className="data_sec">
-                <div className="population"> <div className="M_data">Population</div><FontAwesomeIcon icon={faPeopleGroup} /><span>{place.population}</span></div>
-                <div className="Country"> <div className="M_data">Country</div><FontAwesomeIcon icon={faGlobe} /><span>{place.countryName}</span></div>
-                <div className="Longitude"> <div className="M_data">longitude</div><FontAwesomeIcon icon={faLocation} /><span>{place.lng}</span></div>
-                <div className="Latitude"> <div className="M_data">latitude</div><FontAwesomeIcon icon={faLocation} /><span>{place.lat}</span></div>
+                <div className="population"> <div className="M_data"><FontAwesomeIcon icon={faPeopleGroup} /> Population</div><span>{place.population}</span></div>
+                <div className="Country">  <div className="M_data"><FontAwesomeIcon icon={faGlobe} />Country</div><span>{place.countryName} </span></div>
+                <div className="Longitude"> <div className="M_data"><FontAwesomeIcon icon={faLocation} /> longitude</div><span>{place.lng} </span></div>
+                <div className="Latitude"> <div className="M_data"><FontAwesomeIcon icon={faLocation} /> latitude </div><span>{place.lat}</span></div>
               </div>
             </>
           )}
@@ -121,7 +122,11 @@ const City = ({ handleOpac }) => {
         {place && <div className="fact_info"><h1>Fun Fact</h1><p>{aiResponse}</p></div>}
         {place && (
           <div className='map'>
-            <iframe className="foot_frame" src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(place.lng) - 0.01},${Number(place.lat) - 0.01},${Number(place.lng) + 0.01},${Number(place.lat) + 0.01}&layer=mapnik&marker=${place.lat},${place.lng}`}></iframe>
+            <iframe 
+              title="Weather Map"
+              className="foot_frame" 
+              src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(place.lng) - 0.01},${Number(place.lat) - 0.01},${Number(place.lng) + 0.01},${Number(place.lat) + 0.01}&layer=mapnik&marker=${place.lat},${place.lng}`}
+            ></iframe>
             <small><a href={`https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lng}#map=12/${place.lat}/${place.lng}&layers=N`}>View Larger Map</a></small>
           </div>
         )}
