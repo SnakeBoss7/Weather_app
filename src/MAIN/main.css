@@ -10,6 +10,7 @@
 }
 .container
 {
+    position: relative;
     background-color: #1C293A;
     border-radius: 5px;
     flex: 2;
@@ -32,6 +33,7 @@ header
     justify-content: space-between;
     align-items: center;
     margin-top: 10px;
+    /* margin-bottom: 100px; */
     gap: 20px;
 }
 .fa_icon
@@ -45,7 +47,7 @@ header
 }
 header input
 {
-    width: 40vw;
+    
     padding: 10px;
     font-size: 20px;
     background-color: #000211;
@@ -129,12 +131,13 @@ header button:active
 }
 .name_sec h1
 {
-    font-size: 60px;
+    font-size: 5.2vw;
+    font-weight: 900;
 }
 .name_sec h2
 {
-    font-size: 40px;
-    font-weight: 100;
+    font-size: 3vw;
+    font-weight: 300;
 
 }
 .data_sec
@@ -147,10 +150,10 @@ header button:active
     align-items: center;
     justify-content: center;
     background-color: #000211;
-    padding: 15px  0px;
+    padding: 25px  0px;
     overflow: hidden;
     gap: 50px;
-    column-gap: 130px;
+    column-gap: 220px;
     margin-bottom: 20px;
     flex-direction: row;
 }
@@ -159,7 +162,7 @@ header button:active
     display: flex;
     justify-content: center;
     gap: 20px;
-    font-size: 35px;
+    font-size: 2.4vw;
     align-items: center;
     justify-content: center;
     font-weight: 900;
@@ -173,7 +176,7 @@ header button:active
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: 25px;
+    font-size: 2.3vw;
     font-weight: 100;
 
 }
@@ -193,17 +196,38 @@ header button:active
     display: none;
     /* flex-direction: column; */
 }
+.loading_info
+{
+    /* height: 500px; */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.outer_ai h2
+{
+    font-size: 2vw;
+    margin-bottom: 20px;
+    text-align: left;
+    padding-left: 40px;
+    box-sizing: border-box;
+    font-weight: 900;
+    
+}
+
 /* CITY RIGHT */
 .info
 {
+    position: relative;;
     border-radius: 5px;
     display: flex;
     flex: 1;
     height: 100%;
     background-color:#1C293A;
     flex-direction: column;
-
-    gap: 10px;
+    padding: 50px 0px;
+    box-sizing: border-box;
 }
 .map
 {
@@ -225,11 +249,12 @@ header button:active
 {
     display: flex;
     flex-direction: column;
-    /* align-items: center; */
-
+    align-items: center;
+    justify-content: flex-start;
+    position: relative;
     border-radius: 5px;
     background-color: #1C293A;
-    height: 30vh;
+    height: 30%;
     padding: 20px;
 }
 .fact_info h1
@@ -247,7 +272,6 @@ header button:active
     width: 90%;
     display: flex;
     justify-content: space-between;
-    height: 150px;
 }
 .weath_info_head div:first-child
 {
@@ -259,26 +283,28 @@ header button:active
 }
 .weath_info_head div:first-child h1
 {
-    font-size: 50px;
+    text-align: left;
+    font-size: 4vw;
     font-weight: 900;
     margin: 0;
 }
 .weath_info_head div:first-child h2
 {
     margin-bottom: 20px;
-    font-size: 25px;
+    font-size: 2vw;
     font-weight: 400;
 }
 .weath_info_head div:first-child p
 {
-    font-size: 20px;
+    font-size: 1.3vw;
     font-weight: 250;
     margin-bottom: 5px;
+    font-weight: 300;
 }
 .weath_info_head div:first-child p:last-child
 {
     font-size: 20px;
-    font-weight: 250;
+    font-weight: 300;
 
 }
 
@@ -367,8 +393,16 @@ header button:active
     height: 100%;
     background-color: #1C293A;
     flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    box-sizing: border-box;
 
     gap: 10px;
+}
+.forecast_heading
+{
+    font-size: 20px;
+    font-weight: 900;
 }
 .weath_info_data2
 {
@@ -376,7 +410,7 @@ header button:active
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 40px;
-    column-gap: 50px;
+    column-gap: 25px;
     padding: 20px;
     box-sizing: border-box;
     overflow: hidden;
@@ -399,7 +433,7 @@ header button:active
     display: flex;
     flex-direction: column;
     gap: 10px;
-    font-size: 1.2vw;
+    font-size: 1.1vw;
 }
 .meta_data p
 {
@@ -410,23 +444,100 @@ header button:active
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 90%;
     padding: 10px 30px;
+    background-color: #000211;
+    border-radius: 5px;
 }
 .right_container .week_day .less_space
 {
-    width: 50%;
+    width: 60%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 .right_container .week_day .more_space
 {
-    width: 50%;
+    width: 30%;
     display: flex;
-    /* text-align: center; */
+    text-align: center;
     justify-content: center;
     /* align-items: center; */
+}
+
+.ai_response p
+{
+    text-align: left;
+    font-size: 1.1vw;
+    font-weight: 700;
+    padding: 5px 20px;
+    
+}
+.hidden
+{
+    display: none;
+}
+.visible
+{
+
+    height: 30%;
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.visible img
+{
+    width: 200px;
+    height: 130px;
+}
+.fun_fact
+{
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    position: relative;
+}
+.week_container
+{
+    width: 100%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+.forecast_head
+{
+    height: 10%;
+    text-align: bottom;
+        font-size: 1.7vw;
+    text-align: left;
+    padding: 20px 40px 0px 40px; ;
+    box-sizing: border-box;
+    /* text-decoration: underline; */
+    font-weight: 900;
+}
+.outer_ai
+{
+    height: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.loading_home_info
+{
+    height: 100px;
+}
+.loading_home_info_loading
+{
+    height: 100px;
 }
 @media (max-width: 800px)
 {
@@ -444,14 +555,33 @@ header button:active
     {
         /* all: unset; */
         flex: unset;
-        height: 900px !important;
-        gap: 50px;
+        position: relative;
+        gap: 80px;
         margin-bottom: 10px;
         justify-content: start;
     }
-
+.weath_info_head div:first-child h1
+{
+    font-size: 35px;
+}
+.weath_info_head div:first-child h2
+{
+    font-size: 25px;
+    font-weight: 200;
+}
+.weath_info_head div:first-child p
+{
+    font-size: 17px;
+    padding: 0;
+}
+.weath_info_head div:first-child p:last-child
+{
+    font-size: 17px;
+    padding: 0;
+}
     .display_area
 {
+    position: relative;
     /* display: none; */
     gap: 30px;
 }
@@ -459,11 +589,11 @@ header button:active
     .data_sec
     {
         /* display: none; */
-        padding-top: 20px;
+        /* padding-top: 20px; */
         display: flex;
         gap: 50px;
         height: 75%;
-
+        padding: 50px;
     }
     .data_sec > div
     {
@@ -471,7 +601,7 @@ header button:active
         justify-content: space-between;
         width: 70%;
         gap: 50px;
-        font-size: 35px;
+        font-size: 20px;
     }
     .name_sec h1
     {
@@ -481,7 +611,10 @@ header button:active
     {
         font-size: 30px;
     }
- 
+    .M_data
+    {
+        font-size: 30px;
+    }
     .head_con
     {
         font-size: 30px;
@@ -503,12 +636,7 @@ header button:active
 {
     height: 400px;
 }
-.info
-{
-    height: 700px;
-    display: flex;
-    gap: 10px;
-}
+
 .fact_info
 {
 
@@ -525,6 +653,10 @@ header button:active
 {
   /* padding: 10px 0px 0px 0px; */
   font-size: 15px;
+}
+.weath_info_head
+{
+    height: 200px;
 }
 /* .weath_info_data2
 {
@@ -547,4 +679,20 @@ header button:active
      font-size: 15px;
     flex: 0 0 calc(33.333% - 20px);
  }
+ header input
+ {
+    width: 100px;
+ }
+.ai_response p
+{
+    font-size: 18px;
+}
+.outer_ai h2
+{
+    font-size: 30px;
+}
+.forecast_head
+{
+    font-size: 30px;
+}
 }

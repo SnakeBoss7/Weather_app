@@ -1,15 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './main.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faCloudSun, faCompass, faDroplet, faSun, faUmbrella, faUmbrellaBeach, faWind } from "@fortawesome/free-solid-svg-icons";
 import { UrlFinder, usePlace } from '../MAIN/city';
 import { fetchPlaceData } from '../MAIN/city';
+import lodingGif from './img/output-onlinegiftools.gif';
 const City = ({ handleOpac }) => {
-    const { place, setPlace, weatherInfo, setWeatherInfo, vari, setVari,faren} = usePlace();
+    const { aiResponse_Tip, setAiResponse_Tip,setAiResponse, place, setPlace, weatherInfo, setWeatherInfo, vari, setVari, faren } = usePlace();
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    console.log("Weather Info:", weatherInfo);
-    console.log("Vari (as number):", Number(vari));
+    // Add Enter key functionality for the submit button
+    useEffect(() => {
+        const input = document.getElementById("input_data");
+        if (!input) return;
+        const handleKeyDown = (e) => {
+            if (e.key === "Enter") {
+                document.getElementById("submit_btn")?.click();
+            }
+        };
+        input.addEventListener("keydown", handleKeyDown);
+        return () => input.removeEventListener("keydown", handleKeyDown);
+    }, []);
+
+    const handleSubmit = () => {
+        setLoading(true);
+        fetchPlaceData(
+           faren,
+           setAiResponse_Tip,    // function to set AI tips
+           setError,             // function to set error
+           setPlace,             // function to set place data
+           setWeatherInfo,       // function to set weather info
+           setAiResponse,        // function to set AI fact
+           setVari,              // function to set vari
+           "first",              // type of fetch (by input)
+           UrlFinder 
+        ).finally(() => setLoading(false));
+    };
 
     return (
         <div className="main_container">
@@ -19,10 +46,17 @@ const City = ({ handleOpac }) => {
                         <FontAwesomeIcon icon={faBars} />
                     </div>
                     <input type="text" id="input_data" placeholder="Enter your location" />
-                    <button onClick={() => fetchPlaceData(setError, setPlace, setWeatherInfo, null, setVari, "first", UrlFinder)}>SUBMIT</button>
-                   
+                    <button
+                        id="submit_btn"
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
+                        {loading ? "Loading..." : "SUBMIT"}
+                    </button>
                 </header>
-                {(place && weatherInfo) ? (
+                {loading ? (
+                    <p className='loading_home_info_loading'>Loading weather data...</p>
+                ) : (place && weatherInfo) ? (
                     <>
                         <div className="weath_info_head">
                             <div className="weath_info_head_left">
@@ -31,10 +65,12 @@ const City = ({ handleOpac }) => {
                                     <h2>{place.adminName1}</h2>
                                 </div>
                                 <p>{weatherInfo.current.last_updated}</p>
-                                <p> {faren
-                                    ? `${weatherInfo.current.temp_f} °F`
-                                    : `${weatherInfo.current.temp_c} °C`
-                                }</p>
+                                <p>
+                                    {faren
+                                        ? `${weatherInfo.current.temp_f} °F`
+                                        : `${weatherInfo.current.temp_c} °C`
+                                    }
+                                </p>
                             </div>
                             <div className="weath_info_head_right">
                                 <img src={weatherInfo.current.condition.icon} alt="Weather Icon" />
@@ -54,7 +90,7 @@ const City = ({ handleOpac }) => {
                                                         <p>{weatherInfo.forecast.forecastday[0].hour[hourIndex].time.split(" ")[1]}</p>
                                                         <img src={weatherInfo.forecast.forecastday[0].hour[hourIndex].condition.icon} alt="Weather Icon" />
                                                         <p>
-                                                            {faren?
+                                                            {faren ?
                                                                 `${weatherInfo.forecast.forecastday[0].hour[hourIndex].temp_f} °F` :
                                                                 `${weatherInfo.forecast.forecastday[0].hour[hourIndex].temp_c} °C`}
                                                         </p>
@@ -63,99 +99,113 @@ const City = ({ handleOpac }) => {
                                                 </React.Fragment>
                                             ) : null;
                                         })
-                                    ) : <p>Forecast data unavailable</p>}
+                                    ) : <p className='loading_info'>Forecast data unavailable</p>}
                                 </div>
                             </div>
 
                             <div className="weath_info_data2">
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faDroplet} />
                                         <p>Humidity</p>
                                     </div>
                                     {weatherInfo.current.humidity} %
                                 </div>
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faSun} />
                                         <p>Sunrise</p>
                                     </div>
                                     {weatherInfo.forecast.forecastday[0].astro.sunrise}
                                 </div>
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faCloudSun} />
                                         <p>Sunset</p>
                                     </div>
                                     {weatherInfo.forecast.forecastday[0].astro.sunset}
                                 </div>
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faWind} />
                                         <p>Wind speed</p>
                                     </div>
                                     {weatherInfo.current.wind_kph} kph
                                 </div>
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faCompass} />
                                         <p>Wind Direction</p>
                                     </div>
                                     {weatherInfo.current.wind_dir}
                                 </div>
-                                <div class="in_data">
-                                    <div class="meta_data">
+                                <div className="in_data">
+                                    <div className="meta_data">
                                         <FontAwesomeIcon icon={faUmbrellaBeach} />
                                         <p>UV index</p>
                                     </div>
                                     {weatherInfo.current.uv}
                                 </div>
-
-
-
                             </div>
                         </div>
                     </>
                 ) : (
-                    <p>No weather data available</p>
+                    <p className='loading_home_info'>No weather data available</p>
                 )}
             </div>
-            <div class="right_container">
-
-                {weatherInfo ? (
-                    weatherInfo.forecast.forecastday.map((day) => {
+            <div className="right_container">
+                  {weatherInfo && !loading ?   <h2 className='forecast_head'>3-Days Forecast</h2>: ""}
+                <div className='week_container'>
+                    {weatherInfo  && !loading? (
+                    weatherInfo.forecast.forecastday.map((day, idx) => {
                         const day_date = new Date(day.date);
                         const option = { weekday: 'short' };
                         const day_name = day_date.toLocaleDateString('en-US', option);
-                        console.log("Day Name:", day_name);
                         return (
-                            <div class="week_day">
+                            <div className="week_day" key={day.date || idx}>
                                 <div className="less_space">
-                                <h2>{day_name}</h2>
-                                <img src={day.day.condition.icon} alt="Weather Icon" />
-                                <p>
-                                    {faren ?
-                                        `${day.day.maxtemp_f} °F` :
-                                        `${day.day.maxtemp_c} °C`
-                                    }
-                                </p>
-
+                                    <h2>{day_name}</h2>
+                                    <img src={day.day.condition.icon} alt="Weather Icon" />
+                                    <p>
+                                        {faren ?
+                                            `${day.day.maxtemp_f} °F` :
+                                            `${day.day.maxtemp_c} °C`
+                                        }
+                                    </p>
                                 </div>
                                 <div className="more_space">
-                                <p>{day.day.condition.text}</p>
-
+                                    <p>{day.day.condition.text}</p>
                                 </div>
                             </div>
                         );
                     })
-                ) : null
+                ) : null}
+                </div>
+                
+                {loading ? (
+                    <div className="visible loading_info">
+                        <img src={lodingGif} alt="Loading..." />
+                    </div>
+                                   ) : aiResponse_Tip ? (
+                    <div className="outer_ai">
 
-                }
+                        <h2>AI Tips</h2>
+                    <div className="ai_response">
+                        {aiResponse_Tip.map((tip, index) => (
+                            <p key={index}>{index + 1}. {tip}</p>
+                        ))}
+                    </div>
 
+                    </div>
+ 
+                ) : (
+        
+                        <p className='loading_info'>Enter some data</p>
+                    
+                )}
+                {error && <p className="error">{error}</p>}
             </div>
-
-        </div >
-
+        </div>
     );
 };
 

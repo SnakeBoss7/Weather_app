@@ -19,9 +19,9 @@ const Main = ({ selectedOption ,handleOpac}) => {
             }
         }
         return(
-            <PlaceProvider>
+            <>
                 {renderComponent()}
-            </PlaceProvider>
+            </>
         )
 };
 export default Main;

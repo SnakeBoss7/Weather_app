@@ -2,8 +2,13 @@ import React from 'react';
 import './sideBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCity, faCloud, faCross, faGear, faHome, faXmark } from '@fortawesome/free-solid-svg-icons';
-
+import { usePlace } from './MAIN/city';
+import { UrlFinder } from './MAIN/city';
+import { handle_submit} from './MAIN/city';
+import { } from './MAIN/city';
 const SideBar = ({ setSelectedOption,opac,handleOpac }) => {
+  const {handle_submit }= usePlace();
+   const { error,setError,place, setPlace, setWeatherInfo, aiResponse, setAiResponse,setVari,faren,setAiResponse_Tip } = usePlace();
   return (
     <div className={`${opac? 'open' : 'main'}`}>
       <div class="handler">
@@ -30,6 +35,7 @@ const SideBar = ({ setSelectedOption,opac,handleOpac }) => {
           SETTINGS
         </h3>
       </ul>
+                <button onClick={handle_submit}>LOCATE ME</button>
     </div>
   );
 };

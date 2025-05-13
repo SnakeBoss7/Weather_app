@@ -1,20 +1,27 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import "./main.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faGlobe, faLocation, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import { queryTogetherAI } from "../CHAT_API/api";
-
+import loadingGif from './img/output-onlinegiftools.gif';
 export const PlaceContext = createContext();
 
 export const PlaceProvider = ({ children }) => {
   const [place, setPlace] = useState(null);
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [aiResponse, setAiResponse] = useState(null);
+  const [aiResponse_Tip, setAiResponse_Tip] = useState(null);
   const [vari, setVari] = useState(null);
   const [faren, setfaren] = useState(false);
-  
+  const [error, setError] = useState(true);
+
+  const contextValue = {
+    aiResponse_Tip, setAiResponse_Tip, setError, place, setPlace,
+    weatherInfo, setWeatherInfo, aiResponse, setAiResponse, vari, setVari, faren, setfaren, error
+  };
+
   return (
-    <PlaceContext.Provider value={{ place, setPlace, weatherInfo, setWeatherInfo, aiResponse, setAiResponse, vari, setVari,faren,setfaren }}>
+    <PlaceContext.Provider value={contextValue}>
       {children}
     </PlaceContext.Provider>
   );
@@ -48,7 +55,9 @@ export const UrlFinder = async (type) => {
   return url;
 };
 
-export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiResponse, setVari, type, UrlFinder) => {
+export const fetchPlaceData = async (faren,
+  setAiResponse_Tip, setError, setPlace, setWeatherInfo, setAiResponse, setVari, type, UrlFinder
+) => {
   try {
     const url = await UrlFinder(type);
     if (!url) return setError("Enter the name of the place");
@@ -56,24 +65,62 @@ export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiRe
     const response = await fetch(url);
     const data = await response.json();
     const fetchedPlace = data.geonames?.[0] || data.postalCodes?.[0];
-
     if (!fetchedPlace) {
       setPlace(null);
       return setError("Can't fetch data for the specified location");
     }
 
     setPlace(fetchedPlace);
+    console.log(fetchedPlace);
     setError("");
 
-    const weatherURL = `http://api.weatherapi.com/v1/forecast.json?key=453b48bde3544a35b6683930252803&q=${fetchedPlace.lat},${fetchedPlace.lng}&days=7&aqi=yes&alerts=no`;
+    const weatherURL = `https://api.weatherapi.com/v1/forecast.json?key=453b48bde3544a35b6683930252803&q=${fetchedPlace.lat},${fetchedPlace.lng}&days=7&aqi=yes&alerts=no`;
     const weatherResponse = await fetch(weatherURL);
     const weatherData = await weatherResponse.json();
-    console.log(weatherData)
     setWeatherInfo(weatherData);
     setVari(extractNumber(weatherData.current.last_updated.split(" ")[1].split(":"))[0]);
 
-    const aiFact = await queryTogetherAI(`Tell me the most shocking fact about ${fetchedPlace.name} in ${fetchedPlace.adminName1} in 30 words`);
-    setAiResponse(aiFact);
+const combinedPrompt = `
+Give me two separate outputs in this format:
+
+1. A single-sentence shocking fact (30 words) about ${fetchedPlace.name} in ${fetchedPlace.adminName1} — do not add a "1." label, just the sentence.
+
+2. Then, give 5 weather-related tips for ${weatherData.current.temp_c}°C, UV ${weatherData.current.uv}, wind ${weatherData.current.wind_kph} kph, and ${weatherData.current.condition.text} — also use emojis compatible with Chrome
+`;
+
+try {
+  const new_response = await queryTogetherAI(combinedPrompt);
+  console.log(new_response);
+
+  // Step 1: Extract fact and tips block
+  const [factBlock, ...rest] = new_response.trim().split(/Here (?:are|is)[^:]*:\s*/i);
+  const shockingFact = factBlock.trim();
+  const tipsBlockRaw = rest.join(':').trim();
+
+  // Step 2: Extract tips (numbered, bullets, or emoji-prefixed)
+  const tips = tipsBlockRaw
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line =>
+      /^\d+\.\s/.test(line) ||     // 1. Tip
+      /^\*\s/.test(line) ||        // * Tip
+      /^[\p{Emoji_Presentation}|\p{Emoji}]/u.test(line) // Emoji-prefixed (💧, 🌟, etc.)
+    )
+    .map(line =>
+      line
+        .replace(/^\d+\.\s*/, '')     // Remove "1. ", "2. ", etc.
+        .replace(/^\*\s*/, '')        // Remove "* "
+        .trim()
+    );
+
+  // Final outputs
+  setAiResponse(shockingFact);
+  setAiResponse_Tip(tips);
+
+} catch (error) {
+  setError("Can't fetch data for the specified location");
+}
+
   } catch (error) {
     console.error("Error fetching data:", error);
     setError("Can't fetch data for the specified location");
@@ -81,14 +128,43 @@ export const fetchPlaceData = async (setError, setPlace, setWeatherInfo, setAiRe
 };
 
 const City = ({ handleOpac }) => {
-  const { place, setPlace, setWeatherInfo, aiResponse, setAiResponse,setVari } = usePlace();
-  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    aiResponse_Tip, setAiResponse_Tip, error, setError, place, setPlace,
+    weatherInfo, setWeatherInfo, aiResponse, setAiResponse, setVari,faren
+  } = usePlace();
 
+  // This code defines a memoized callback function called handleSubmit.
+  // When called, it triggers fetchPlaceData with the current setters and dependencies.
+  // The useCallback hook ensures that handleSubmit is only recreated if any dependency changes.
+
+  const handleSubmit = useCallback(() => {
+        setIsLoading(true);
+    fetchPlaceData(
+      faren,
+      setAiResponse_Tip,    // function to set AI tips
+      setError,             // function to set error
+      setPlace,             // function to set place data
+      setWeatherInfo,       // function to set weather info
+      setAiResponse,        // function to set AI fact
+      setVari,              // function to set vari
+      "first",              // type of fetch (by input)
+      UrlFinder           // function to build the URL
+    ).finally(() => {setIsLoading(false);});
+  }, [faren,setAiResponse_Tip, setError,place, setPlace, setWeatherInfo, setAiResponse, setVari]);
+
+  // Add Enter key functionality
   useEffect(() => {
-    if (place) {
-      queryTogetherAI(`Tell me the most shocking fact about ${place.name} in ${place.adminName1} in 30 words`).then(setAiResponse);
-    }
-  }, [place, setAiResponse]);
+    const input = document.getElementById("input_data");
+    if (!input) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        handleSubmit();
+      }
+    };
+    input.addEventListener("keydown", handleKeyDown);
+    return () => input.removeEventListener("keydown", handleKeyDown);
+  }, [handleSubmit]);
 
   return (
     <div className="main_container">
@@ -98,12 +174,11 @@ const City = ({ handleOpac }) => {
             <FontAwesomeIcon icon={faBars} />
           </div>
           <input type="text" id="input_data" placeholder="Enter your location" />
-          <button onClick={() => fetchPlaceData(setError, setPlace, setWeatherInfo, setAiResponse, setVari, "first", UrlFinder)}>SUBMIT</button>
-          <button onClick={() => fetchPlaceData(setError, setPlace, setWeatherInfo, setAiResponse, setVari, "second", UrlFinder)}>Current Location</button>
+          <button onClick={handleSubmit}>  {isLoading ? "Loading..." : "SUBMIT"}</button>
         </header>
         <div className="display_area">
           {error ? <p>{error}</p> : place && (
-            <>
+            <>    {console.log('PLACE:', place)}
               <div className="name_sec">
                 <h1>{place.name}</h1>
                 <h2>{place.adminName1}</h2>
@@ -119,12 +194,27 @@ const City = ({ handleOpac }) => {
         </div>
       </div>
       <div className="info">
-        {place && <div className="fact_info"><h1>Fun Fact</h1><p>{aiResponse}</p></div>}
+        <div className="fun_fact">
+          {isLoading ? (
+            <div className="visible loading_info">
+              <img src={loadingGif} alt="Loading..." />
+            </div>
+          ) : place ? (
+            <div className="fact_info">
+              <h1>Fun Fact</h1>
+              <p>{aiResponse}</p>
+            </div>
+          ) : (
+            <div>
+              <p>Enter some data</p>
+            </div>
+          )}
+        </div>
         {place && (
           <div className='map'>
-            <iframe 
+            <iframe
               title="Weather Map"
-              className="foot_frame" 
+              className="foot_frame"
               src={`https://www.openstreetmap.org/export/embed.html?bbox=${Number(place.lng) - 0.01},${Number(place.lat) - 0.01},${Number(place.lng) + 0.01},${Number(place.lat) + 0.01}&layer=mapnik&marker=${place.lat},${place.lng}`}
             ></iframe>
             <small><a href={`https://www.openstreetmap.org/?mlat=${place.lat}&mlon=${place.lng}#map=12/${place.lat}/${place.lng}&layers=N`}>View Larger Map</a></small>
