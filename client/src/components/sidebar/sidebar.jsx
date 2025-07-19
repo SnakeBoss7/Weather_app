@@ -42,7 +42,7 @@ export const Sidebar = () => {
       } transition:all ease-in-out duration-500 lg:block bg-accent-primary lg:w-[20%] w-[70%]  shadow-right h-full`}
     >
       <div className="flex justify-between p-3 items-start">
-        <div class="logo flex items-start ">
+        <div className="logo flex items-start ">
           <div className="text-white text-2xl flex items-start">Weath</div>
           <div className="font-mono text-primary bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-3xl text-bottom">
             FAX

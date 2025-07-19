@@ -29,28 +29,51 @@ const locInputData = async(req,res) =>
         }
     } 
 
-    const locData = async(req,res) =>
-    {
-        console.log('calld locData')
-        const username = process.env.USERNAME_KEY;
-        const {location} = req.body;
-        console.log(location)
-        let url = isNaN(location[0])?`https://secure.geonames.org/searchJSON?q=${location[0]}&countryName=${location[location.length-1]}&adminName1=Delhi&maxRows=10&username=${username}`:`https://secure.geonames.org/postalCodeSearchJSON?postalcode=${location[0]}&country=${location[location.length-1]}&maxRows=10&username=${username}`       
-
-        try
-        {
-            let response = await fetch(url);
-            let locationsData = await response.json();
-let locData = locationsData.postalCodes.filter(
-  (data) => data.placeName.trim().toLowerCase() === location[1].trim().toLowerCase()
+const locData = async (req, res) => {
+  console.log('Called locData');
   
-);
-console.log(locData)
-        }catch(err)
-        {
-            console.log(err);
-            res.status(400).json({mess:'there some issue with geonames',error:err});
-        }
-    } 
+  const username = process.env.USERNAME_KEY;
+  const { location } = req.body;
 
-module.exports = {locInputData,locData};
+  if (!Array.isArray(location) || location.length < 2) {
+    return res.status(400).json({ error: 'Invalid location input' });
+  }
+
+  const nameOrPin = location[0];
+  const country = location[location.length - 1];
+  const adminName = location.length >= 3 ? location[1] : ''; 
+
+  const url = isNaN(nameOrPin)
+    ? `http://api.geonames.org/searchJSON?name_equals=${encodeURIComponent(nameOrPin)}&adminName1=${encodeURIComponent(adminName)}&maxRows=10&username=${username}`
+    : `https://secure.geonames.org/postalCodeSearchJSON?postalcode=${encodeURIComponent(nameOrPin)}&country=${encodeURIComponent(country)}&maxRows=10&username=${username}`;
+
+  try {
+    const response = await fetch(url);
+    const locationsData = await response.json();
+
+    let locationData = null;
+
+    if (isNaN(nameOrPin)) {
+      locationData = locationsData.geonames?.find(
+        (data) =>
+          data.adminName1?.trim().toLowerCase() === adminName.trim().toLowerCase()
+      );
+    } else {
+      locationData = locationsData.postalCodes?.find(
+        (data) =>
+          data.placeName?.trim().toLowerCase() === location[1].trim().toLowerCase()
+      );
+    }
+    console.log(locationData)
+
+    return res.status(200).json({ locationData });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: 'There was an issue with GeoNames API',
+      error: err.message || err,
+    });
+  }
+};
+
+module.exports = { locData ,locInputData};

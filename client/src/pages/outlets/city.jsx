@@ -3,15 +3,32 @@ import axios from "axios";
 import Switch from "../../components/hamburger/hamburger";
 import { DropDown } from "../../components/input/input";
 import { useLocContext } from "../../context/locationContext";
+import {
+  Flag,
+  LightbulbIcon,
+  LocateFixedIcon,
+  LocateIcon,
+  Users,
+} from "lucide-react";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const City = () => {
   const { location } = useLocContext();
+  const [locationInfo, setLocationData] = useState(null);
+  const [aiResponse, setAiResponse] = useState(null);
   useEffect(() => {
     const handleFetchData = async () => {
       try {
-        let res = await axios.post(`${apiUrl}/getdata/getLocInfo`, { location });
+        let res = await axios.post(`${apiUrl}/getdata/getLocInfo`, {
+          location,
+        });
+        let aiRes = await axios.post(`${apiUrl}/getdata/getFunFact`, {
+          location,
+        });
         console.log(res.data);
+        console.log(aiRes.data.response);
+        setAiResponse(aiRes.data.response);
+        setLocationData(res.data.locationData);
       } catch (err) {
         console.log(err);
       }
@@ -19,14 +36,126 @@ const City = () => {
     if (location.length > 0) {
       handleFetchData();
     }
-  },[location]);
+  }, [location]);
   return (
-    <div className="bg-primary p-3 h-full w-full lg:w-[80%] flex flex-col">
+    <div className="bg-primary min-h-screen p-3 sm:h-full w-full lg:w-[80%] flex flex-col">
       <header className="w-full flex justify-between w-full">
-        {/* <input type="text" className="p-3 bg-accent-primary outline-secondary rounded-lg w-1/3 h-10" placeholder="Enter the name of the place..."/> */}
         <DropDown />
         <Switch />
       </header>
+      {locationInfo ? (
+        <>
+          {" "}
+          <div className="heading px-3 flex flex-col gap-3">
+            <h1 className="mt-10 text-4xl">
+              {locationInfo.toponymName ||
+                locationInfo.PlaceName ||
+                locationInfo.adminName1}
+            </h1>
+            <div class="country text-2xl flex flex-col ">
+              <span className="city text-gray-400">
+                {locationInfo.adminName1}
+                {!locationInfo.countryName && "-" + locationInfo.countryCode}
+              </span>
+              <span className="city text-gray-400">
+                {locationInfo.countryName &&
+                  locationInfo.countryName + "-" + locationInfo.countryCode}
+              </span>
+            </div>
+          </div>
+          <div className="Data flex mt-10 w-full p-3 md:flex-row flex-col gap-3">
+            <div className="flex flex-col gap-4 sm:w-[60%] w-full ">
+              <div className="grid grid-cols-1 gap-4 w-[100%]  sm:grid-cols-2">
+                <div className=" p-4 rounded bg-accent-primary rounded-xl flex flex-col gap-2">
+                  <div class="heading flex gap-3 text-xl items-center">
+                    <Users
+                      className="bg-accent-secondary h-8 w-8 p-[6px] rounded-xl"
+                      color="#45BBFF"
+                      size={10}
+                    />{" "}
+                    Population
+                  </div>
+                  <p className="text-2xl tracking-tight text-zinc-300">
+                    {locationInfo.population || "Not available"}
+                  </p>
+                </div>
+                <div className=" p-4 rounded bg-accent-primary rounded-xl flex flex-col gap-2">
+                  <div class="heading flex gap-3 text-xl items-center">
+                    <LocateFixedIcon
+                      className="bg-accent-secondary h-8 w-8 p-[6px] rounded-xl"
+                      color="#45BBFF"
+                      size={10}
+                    />{" "}
+                    Population
+                  </div>
+                  <p className="text-2xl tracking-tight text-zinc-300">{locationInfo.lng}</p>
+                </div>
+                <div className=" p-4 rounded bg-accent-primary rounded-xl flex flex-col gap-2">
+                  <div class="heading flex gap-3 text-xl items-center">
+                    <LocateFixedIcon
+                      className="bg-accent-secondary h-8 w-8 p-[6px] rounded-xl"
+                      color="#45BBFF"
+                      size={10}
+                    />{" "}
+                    Population
+                  </div>
+                  <p className="text-2xl tracking-tight text-zinc-300">{locationInfo.lat}</p>
+                </div>
+                <div className=" p-4 rounded bg-accent-primary rounded-xl flex flex-col gap-2">
+                  <div class="heading flex gap-3 text-xl items-center">
+                    <Flag
+                      className="bg-accent-secondary h-8 w-8 p-[6px] rounded-xl"
+                      color="#45BBFF"
+                      size={10}
+                    />{" "}
+                    Country
+                  </div>
+                  <p className="text-2xl tracking-tight text-zinc-300">
+                    {locationInfo.countryName || locationInfo.countryCode}
+                  </p>
+                </div>
+              </div>
+              <div class="funfact bg-accent-primary flex flex-col gap-3 rounded-lg p-3">
+                <h1 className="text-3xl flex items-center gap-3">
+                  <LightbulbIcon
+                    className="bg-yellow-600 p-1 opacity-[80%] rounded-lg"
+                    size={30}
+                    color="yellow"
+                  />
+                  Fun Fact
+                </h1>
+                <p className="tracking-tight text-xl text-zinc-300">{aiResponse}</p>
+              </div>
+            </div>
+            <div class="map w-full mb-[10px] sm:mb-0  min-h-[350px] rounded-xl bg-accent-primary p-3 sm:w-[40%]">
+              <iframe
+                className="w-full h-full min-h-[500px]rounded-xl"
+                marginwidth="0"
+                id="gmap_canvas"
+                src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=Mauli%20Jagran%20Chandigarh+()&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+              ></iframe>{" "}
+              <a href="https://www.acadoo.de/leistungen/ghostwriter-doktorarbeit/"></a>{" "}
+              <script
+                type="text/javascript"
+                src="https://embedmaps.com/google-maps-authorization/script.js?id=352c676308b50158828fa7fe48afae0dc04d7c52"
+              ></script>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          <iframe
+            className="w-full rounded-xl h-[500px]"
+            id="gmap_canvas"
+            src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=Mauli%20Jagran%20Chandigarh+()&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
+          ></iframe>{" "}
+          <a href="https://www.acadoo.de/leistungen/ghostwriter-doktorarbeit/"></a>{" "}
+          <script
+            type="text/javascript"
+            src="https://embedmaps.com/google-maps-authorization/script.js?id=352c676308b50158828fa7fe48afae0dc04d7c52"
+          ></script>
+        </>
+      )}
     </div>
   );
 };

@@ -16,7 +16,6 @@ export const DropDown = () => {
         []
     );
 const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
-  console.log('calls:', inputValue);
   if (inputValue === '') {
     setOptions([]);
     return;
@@ -34,10 +33,9 @@ const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
 
 const setLocData = (e) =>
   {
-    console.log(e);
+
    let data = e.label.split(',').map(val => val.trim()); 
   setLocation(data); 
-  console.log(data);  
   }
 
 const inputChange = (inputValue, { action }) => {
