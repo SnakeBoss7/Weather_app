@@ -2,8 +2,12 @@ const express = require('express')
 const app = express();
 const getDataRoute = require('./routes/getData')
 const cors = require('cors');
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'https://weather-app-one-tawny-64.vercel.app',
+  }));
 app.use(express.json());
+
 require('dotenv').config();
 app.use('/getdata',getDataRoute);
 app.get("/keep-alive", (req, res) => {
