@@ -8,7 +8,7 @@ const locInputData = async(req,res) =>
         {
             let response = await fetch(url);
             let locData = await response.json();
-            console.log(locData)
+
             let locations = locData.geonames|| locData.postalCodes;
             locations.forEach((loc,index)=>
                 {
@@ -20,7 +20,7 @@ const locInputData = async(req,res) =>
                     
                 })
 
-            console.log(options)
+
             res.json({options});
         }catch(err)
         {
@@ -30,8 +30,7 @@ const locInputData = async(req,res) =>
     } 
 
 const locData = async (req, res) => {
-  console.log('Called locData');
-  
+
   const username = process.env.USERNAME_KEY;
   const { location } = req.body;
 
@@ -64,7 +63,7 @@ const locData = async (req, res) => {
           data.placeName?.trim().toLowerCase() === location[1].trim().toLowerCase()
       );
     }
-    console.log(locationData)
+
 
     return res.status(200).json({ locationData });
   } catch (err) {
@@ -75,5 +74,20 @@ const locData = async (req, res) => {
     });
   }
 };
+const weathData = async (req, res) => {
 
-module.exports = { locData ,locInputData};
+  let loc = encodeURIComponent(req.body.location.join(','));
+
+  try
+  {
+    let response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=453b48bde3544a35b6683930252803&q=${loc}&days=3&aqi=no&alerts=no`);
+    data = await response.json();
+
+    res.status(200).json({data});
+  }catch(err)
+  {
+    res.status(400).json({mess:"There's some issue with the weather api",err});
+  }
+};
+
+module.exports = { locData ,locInputData,weathData};

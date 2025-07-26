@@ -50,9 +50,9 @@ export const Sidebar = () => {
         </div>
         {/* <Checkbox show={showSidebar} /> */}
       </div>
-      <div className="links flex flex-col gap-3 pr-10 px-3">
+      <div className="links mt-10 flex flex-col gap-3 pr-10 px-3">
         <NavLink
-          to="/dashboard"
+          to="/"
           end
           className={({ isActive }) =>
              isActive
@@ -60,17 +60,17 @@ export const Sidebar = () => {
               : "flex items-center gap-3 text-white h-12 hover:text-secondary pl-2"
           }
         >
-          <DatabaseIcon className="w-5" /> Dashboard
+          <DatabaseIcon className="w-5" /> Location
         </NavLink>
         <NavLink
-          to="/"
+          to="weatherData"
           className={({ isActive }) =>
             isActive
               ? "flex items-center gap-3 text-white h-12 font-bold  text-lg rounded-lg bg-secondary  pl-2"
               : "flex items-center gap-3 text-white h-12 hover:text-secondary pl-2"
           }
         >
-          <MessageSquare className="w-5" /> Feedback
+          <MessageSquare className="w-5" /> Weather
         </NavLink>
         <NavLink
           to="/dashboard/analytics"
@@ -80,7 +80,7 @@ export const Sidebar = () => {
               : "flex items-center gap-3 text-white h-12 hover:text-secondary pl-2"
           }
         >
-          <ChartArea className="w-5" /> Analytics
+          <ChartArea className="w-5" /> settings
         </NavLink>
       </div>
     </div>

@@ -23,7 +23,7 @@ export const Home = ()=>
                 return () => {window.removeEventListener('resize',handleSidebar)}
         },[])
     return(
-        <div className="flex h-full w-full">
+        <div className="flex h-full overflow-hidden w-full">
 
                 <Sidebar/>
 

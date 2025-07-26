@@ -4,15 +4,21 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { SidebarContextProvider } from "./context/sidebarContext";
-import { LocationContextProvdier } from "./context/locationContext";
+import { LocationContextProvider } from "./context/locationContext";
+import { SkeletonTheme } from "react-loading-skeleton";
+
+import 'react-loading-skeleton/dist/skeleton.css'; // Don't forget CSS
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <LocationContextProvdier>
+    <SkeletonTheme baseColor="#6d7074ff" highlightColor="#c9ccceff">
+    <LocationContextProvider>
       <SidebarContextProvider>
         <App />
       </SidebarContextProvider>
-    </LocationContextProvdier>
+    </LocationContextProvider>
+    </SkeletonTheme>
   </React.StrictMode>
 );
 

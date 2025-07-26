@@ -3,15 +3,13 @@ import axios from "axios";
 import Select from "react-select";
 import { debounce } from "lodash";
 import { useLocContext } from "../../context/locationContext";
-import { LocateIcon } from "lucide-react";
 const apiUrl = process.env.REACT_APP_API_URL;
 const customComponents = {
     IndicatorSeparator: () => null,
     DropdownIndicator: () => null,
 };
 export const DropDown = () => {
-    const {location,setLocation} = useLocContext(); 
-    const [input, setInput] = useState("");
+    const {setLocation} = useLocContext(); 
     const [options, setOptions] = useState(
         []
     );
@@ -29,7 +27,7 @@ const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
   } catch (err) {
     console.error(err);
   }
-}, 600));
+},200));
 
 const setLocData = (e) =>
   {
@@ -38,12 +36,12 @@ const setLocData = (e) =>
   setLocation(data); 
   }
 
-const inputChange = (inputValue, { action }) => {
+const inputChange = (inputValue) => {
     debouncedFetch(inputValue);
 }
   return (
     <Select
-      className="w-2/4 "
+      className="sm:w-2/4 w-[70%] "
       options={options}
       onInputChange={inputChange}
       onChange={setLocData}

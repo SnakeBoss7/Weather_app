@@ -1,35 +1,76 @@
-const Together = require('together-ai');
+const axios = require('axios');
+const { Together } = require('together-ai');
+require('dotenv').config();
 
-
+// Initialize Together AI SDK
 const together = new Together({
-  apiKey: 'd7d0b6c58e52f937c8730086974749e12a4a7e5995cc51de7c0c8a0e021ef6c9'
+  apiKey: process.env.TOGETHER_API,
 });
 
-// Route to call Together AI for Fun fact
-const funFactAi= async (req, res) => {
-    try {
-      console.log('chatting')
-    console.log('chatting')
-    const loc = req.body.location.join(',');
+//  Route: Get fun fact based on location array
+const funFactAi = async (req, res) => {
+  try {
+
+    const locationArr = req.body.location;
+    if (!Array.isArray(locationArr) || locationArr.length === 0) {
+      return res.status(400).json({ error: 'Location must be a non-empty array.' });
+    }
+
+    const loc = locationArr.join(',');
+
     const response = await together.chat.completions.create({
+      model: 'lgai/exaone-3-5-32b-instruct',
       messages: [
         {
           role: 'system',
-          content: 'You are an expert in knowing the geolocation and funfact and general knowledge and you will be asked a question Give answer Stricly in less then 40 words'
+          content: 'You are an expert in knowing the geolocation and funfact and general knowledge and you will be asked a question. Give answer strictly in less than 40 words.'
         },
         {
-            role: 'user',
+          role: 'user',
           content: `Tell me a fun fact about ${loc}`
         }
-      ],
-      model: 'lgai/exaone-3-5-32b-instruct'
+      ]
     });
 
-    const answer = response.choices[0].message.content;
-    res.status(200).json({response:answer});
+    const answer = response.choices?.[0]?.message?.content?.trim() || "No response from AI.";
+    return res.status(200).json({ response: answer });
+
   } catch (error) {
-    console.error('Error calling Together AI:', error);
-    res.status(500).json({ error: 'Failed to fetch from Together AI' });
+    console.error('❌ Error in funFactAi:', error.response?.data || error.message);
+    return res.status(500).json({ error: 'Failed to fetch fun fact from Together AI' });
   }
 };
-module.exports = {funFactAi};
+
+
+const askTogetherAI = async (req, res) => {
+  let chat = [...req.body.aiResponse,{role:'user',content:req.body.userPrompt}]
+  console.log(chat);
+  try {
+    const { systemPrompt, userPrompt } = req.body;
+    const response = await axios.post(
+      'https://api.together.xyz/v1/chat/completions',
+      {
+        model: 'meta-llama/Llama-3-8b-chat-hf',
+        messages: [{ role: 'system', content: 'ALWAYS ANSWER IN LESS THEN 30 WORDS' }, ...chat],
+        temperature: 0.7,
+        max_tokens: 1024,
+        top_p: 0.9
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.TOGETHER_API}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    res.status(200).json({response:response.data.choices[0].message.content.trim()});
+    
+  } catch (error) {
+    console.error(' Error in askTogetherAI:', error.response?.data || error.message);
+    throw new Error('Failed to get response from Together AI');
+    res.status(200).json({response:'sorry the ai is under maintanece right now'});
+  }
+};
+
+module.exports = { funFactAi, askTogetherAI };
