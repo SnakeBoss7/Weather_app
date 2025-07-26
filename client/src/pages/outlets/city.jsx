@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import axios from "axios";
 import checkbox from "../../components/hamburger/hamburger";
 import { DropDown } from "../../components/input/input";
