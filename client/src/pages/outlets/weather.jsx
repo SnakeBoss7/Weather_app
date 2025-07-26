@@ -65,7 +65,7 @@ const WeatherPage = ({ handleOpac }) => {
 
     }
   return (
-    <div className="bg-primary overflow-y-scroll h-full md:overflow-hidden min-h-screen  gap- 3sm:h-full w-full lg:w-[80%] flex lg:flex-row flex-col">
+    <div className="bg-primary overflow-y-scroll h-full md:overflow-hidden min-h-screen mb-10  gap- 3sm:h-full w-full lg:w-[80%] flex lg:flex-row flex-col">
       <div className="h-full flex flex-col    lg:w-[65%] w-full p-3">
         <header className="w-full flex justify-between w-full">
           <DropDown />
@@ -159,7 +159,7 @@ const WeatherPage = ({ handleOpac }) => {
               <h2 className="mt-8 mb-5 text-xl font-bold">Quick Actions</h2>
 <button onClick={(e)=> setUserPrompt(e.target.innerText)} className=" bg-accent-secondary p-2 rounded-md">UV Index: {weatherData.current.uv}, Any precautions?</button>
 
-<button onClick={(e)=> setUserPrompt(e.target.innerText)} className="bg-accent-secondary p-2 rounded-md">{weatherData.current.temp_c}°C — Any tips?</button></>
+<button onClick={(e)=> setUserPrompt(e.target.innerText)} className="bg-accent-secondary p-2 mb-10 rounded-md">{weatherData.current.temp_c}°C — Any tips?</button></>
               }
              </div>
             </div>
