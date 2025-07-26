@@ -20,6 +20,8 @@ const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
   }
 
   try {
+    console.log('called the backend')
+    console.log(apiUrl)
     let res = await axios.post(`${apiUrl}/getdata/getLocInputInfo`, {
       locName: inputValue,
     });

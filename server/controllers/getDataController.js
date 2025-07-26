@@ -1,5 +1,6 @@
 const locInputData = async(req,res) =>
     {
+      console.log('hi im backend');
         const username = process.env.USERNAME_KEY;
         const {locName} = req.body;
         let url = isNaN(locName)?`https://secure.geonames.org/searchJSON?q=${locName}&featureClass=P&maxRows=10&username=${username}`:`https://secure.geonames.org/postalCodeSearchJSON?postalcode=${locName}&maxRows=10&username=${username}`       
