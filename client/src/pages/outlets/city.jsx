@@ -1,13 +1,11 @@
 import {  useEffect, useState } from "react";
 import axios from "axios";
-import checkbox from "../../components/hamburger/hamburger";
 import { DropDown } from "../../components/input/input";
 import { useLocContext } from "../../context/locationContext"; // Adjust path as needed
 import {
   Flag,
   LightbulbIcon,
   LocateFixedIcon,
-  LocateIcon,
   Users,
 } from "lucide-react";
 import Checkbox from "../../components/hamburger/hamburger";
