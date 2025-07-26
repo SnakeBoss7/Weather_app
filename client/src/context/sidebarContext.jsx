@@ -1,18 +1,18 @@
-import { createContext,useContext, useState } from "react"
-const sidebarContext = createContext({
-    showSidebar:'',
-    setShowSidebar:()=>{}
+import { createContext, useState, useContext } from 'react';
+const SidebarContext = createContext({
+  showSidebar: '',
+  setShowSidebar: () => {}
 });
 
-const SidebarContextProvider = ({children})=>{
-    const [showSidebar,setShowSidebar] = useState(window.innerWidth >= 1024);
-    return (
-        <sidebarContext.Provider value={{showSidebar,setShowSidebar}}>
-            {children}
-        </sidebarContext.Provider>
-    );
-} 
+const SidebarContextProvider = ({ children }) => {
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth >= 1024);
+  return (
+    <SidebarContext.Provider value={{ showSidebar, setShowSidebar }}>
+      {children}
+    </SidebarContext.Provider>
+  );
+};
 
-const useSidebarContext = ()=> useContext(sidebarContext);
+const useSidebarContext = () => useContext(SidebarContext);
 
-export  {SidebarContextProvider,useSidebarContext};
+export { SidebarContextProvider, useSidebarContext };
