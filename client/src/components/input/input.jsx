@@ -29,7 +29,7 @@ const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
   } catch (err) {
     console.error(err);
   }
-},50));
+},50),[]);
 
 const setLocData = (e) =>
   {

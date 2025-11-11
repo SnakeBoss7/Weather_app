@@ -28,7 +28,7 @@ export const Sidebar = () => {
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
-  }, []);
+  }, [setShowSidebar]);
   const sidebarClose =()=>
     {
       if(window.innerWidth<1024){
