@@ -37,13 +37,13 @@ Create a `.env` file in `server/` (this repo includes an example). At minimum se
 PORT=5000
 USERNAME_KEY=your_geonames_username
 WEATH_API=your_weatherapi_key
-OPENAI_API_KEY=your_openai_api_key   # optional (only needed for AI features)
+NVIDIA_API_KEY=your_NVIDIA_API_KEY   # optional (only needed for AI features)
 ```
 
 Notes:
 - `USERNAME_KEY` is the GeoNames username used for location lookup.
 - `WEATH_API` is the WeatherAPI key used to fetch forecasts.
-- `OPENAI_API_KEY` powers AI-generated fun facts and the chatbot — leave out if you don't need AI features, but the server will log a warning/error if missing.
+- `NVIDIA_API_KEY` powers AI-generated fun facts and the chatbot — leave out if you don't need AI features, but the server will log a warning/error if missing.
 
 ## Run locally
 
@@ -86,12 +86,12 @@ The client defaults to `http://localhost:3000` and the server origin is expected
 ## Troubleshooting
 
 - If `process.env.USERNAME_KEY` is `undefined` in `getDataController.js`, ensure `require('dotenv').config()` runs before routes are required — this project loads dotenv at the top of `server/app.js`.
-- If you see an OpenAI "Missing credentials" error on startup, add `OPENAI_API_KEY` to `server/.env` or guard the LLM controller to skip AI calls when no key is present.
+- If you see an OpenAI "Missing credentials" error on startup, add `NVIDIA_API_KEY` to `server/.env` or guard the LLM controller to skip AI calls when no key is present.
 - `server/package.json` `start` script may point to `index.js` by default; start the app with `node app.js` or update the script to `node app.js`.
 
 ## Deployment
 
-- Ensure the production environment has the same environment variables set (USERNAME_KEY, WEATH_API, OPENAI_API_KEY if used).
+- Ensure the production environment has the same environment variables set (USERNAME_KEY, WEATH_API, NVIDIA_API_KEY if used).
 - The client build is under `client/build` (or `build/` at repo root if prebuilt). Serve that as static assets or deploy the client separately (Vercel, Netlify).
 - For the server, deploy to any Node host (Heroku, Render, Railway, etc.) and set env vars in the host dashboard.
 
@@ -99,11 +99,3 @@ The client defaults to `http://localhost:3000` and the server origin is expected
 
 - Controllers currently read some env vars at module scope. If you prefer, move those reads into handlers so they pick up environment changes at runtime.
 - The AI features are optional — they provide fun facts on the Location page and power the Weather chat assistant.
-
-## Contributing
-
-PRs welcome. For bigger changes, open an issue first describing the change.
-
-## License
-
-Add your preferred license.
