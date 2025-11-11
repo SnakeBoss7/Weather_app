@@ -44,7 +44,6 @@ const WeatherPage = ({ handleOpac }) => {
       if(localStorage.getItem("weath_data")){
         const locationData = JSON.parse(localStorage.getItem("weath_data"));
     setWeatherData(JSON.parse(localStorage.getItem("weath_data")));
-    const loc = JSON.parse(localStorage.getItem("locData"))
     if(location.lat !==  locationData.lat){
       handleFetchData();
 
