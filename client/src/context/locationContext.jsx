@@ -1,14 +1,14 @@
-import { useState,useContext,createContext } from "react";
+// locationContext.js
+import { useState, useContext, createContext } from "react";
 
-let LocContext = createContext(
-    {
-        location:[],
-        setLocation:()=>{}
-    }
-);
+let LocContext = createContext({
+  location: {},
+  setLocation: () => {}
+});
 
 const LocationContextProvider = ({children}) => {
-  const [location, setLocation] = useState([]);
+  const [location, setLocation] = useState({}); // Changed from [] to {}
+  
   return (
     <LocContext.Provider value={{ location, setLocation }}>
       {children}
@@ -16,7 +16,6 @@ const LocationContextProvider = ({children}) => {
   );
 };
 
-const useLocContext = ()=> useContext(LocContext);
-
+const useLocContext = () => useContext(LocContext);
 
 export { useLocContext, LocationContextProvider };

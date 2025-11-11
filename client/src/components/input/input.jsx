@@ -29,12 +29,13 @@ const debouncedFetch = useMemo(() => debounce(async (inputValue) => {
   } catch (err) {
     console.error(err);
   }
-},200));
+},50));
 
 const setLocData = (e) =>
   {
 
-   let data = e.label.split(',').map(val => val.trim()); 
+   let data = e.value;
+   console.log({data})
   setLocation(data); 
   }
 

@@ -2,9 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
 html,body,#root
 {
   @apply h-full
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  border-radius: 12px;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 #root,html,body
 {

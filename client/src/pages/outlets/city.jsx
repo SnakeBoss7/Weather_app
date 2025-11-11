@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import Checkbox from "../../components/hamburger/hamburger";
 import Skeleton from "react-loading-skeleton";
+import MapComponent from "../../components/map";
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const City = () => {
@@ -17,31 +18,44 @@ const City = () => {
   const [locationData, setLocationData] = useState(null);
   const [isLoading,setIsLoading] = useState(false)
   const [aiResponse, setAiResponse] = useState(null);
-  useEffect(() => {
-    const handleFetchData = async () => {
-      setIsLoading(true);
-      try {
-        let res = await axios.post(`${apiUrl}/getdata/getLocInfo`, {
-          location,
-        });
-        let aiRes = await axios.post(`${apiUrl}/getdata/getFunFact`, {
-          location,
-        });
-        console.log(res.data);
-        console.log(aiRes.data.response);
-        setAiResponse(aiRes.data.response);
-        setLocationData(res.data.locationData);
-      } catch (err) {
-        console.log(err);
-      }
-      setIsLoading(false);
-    };
-    if (location.length > 0) {
-      handleFetchData();
+useEffect(() => {
+  const handleFetchData = async () => {
+    setIsLoading(true);
+    try {
+      let res = await axios.post(`${apiUrl}/getdata/getLocInfo`, {
+        location,
+      });
+      let aiRes = await axios.post(`${apiUrl}/getdata/getFunFact`, {
+        location,
+      });
+      console.log(res.data);
+      console.log(aiRes.data.response);
+      setAiResponse(aiRes.data.response);
+      setLocationData(res.data.locationData);
+      localStorage.setItem("locData",JSON.stringify(res.data.locationData));
+      localStorage.setItem("aiRes",JSON.stringify(aiRes.data.response));
+    } catch (err) {
+      console.log(err);
     }
-  }, [location]);
+    setIsLoading(false);
+  };
+  
+  // Check if location has lat and lng properties
+  if(localStorage.getItem("locData")){
+    setLocationData(JSON.parse(localStorage.getItem("locData")));
+    setAiResponse(JSON.parse(localStorage.getItem("aiRes")));
+    const loc = JSON.parse(localStorage.getItem("locData"))
+    if(location.lat !==  loc.lat){
+      handleFetchData();
+
+    }
+  }
+  else if (location?.lat && location?.lng) {
+    handleFetchData();
+  }
+}, [location]);
   return (
-    <div className="bg-primary overflow-y-scroll md:overflow-hidden min-h-screen p-3 sm:h-full w-full lg:w-[80%] flex flex-col">
+    <div className="bg-primary overflow-y-scroll md:overflow-hidden min-h-screen p-3 sm:h-full w-full lg:w-[85%] flex flex-col">
       <header className="w-full flex justify-between w-full">
         <DropDown />
         <Checkbox/>
@@ -158,40 +172,47 @@ const City = () => {
               </div>
             </div>
             <div class="map w-full mb-[10px] sm:mb-0  min-h-[350px] rounded-xl bg-accent-primary p-3 md:w-[40%]">
-              <iframe
-                className="w-full h-full min-h-[500px]rounded-xl"
-                marginwidth="0"
-                id="gmap_canvas"
-                src={`https://www.google.com/maps?q=${locationData.toponymName||locationData.PlaceName ||
-                locationData.adminName1},+${locationData.countryName || locationData.countryCode}&z=12&output=embed`}
-              ></iframe>{" "}
-              <a href="https://www.acadoo.de/leistungen/ghostwriter-doktorarbeit/"></a>{" "}
-              <script
-                type="text/javascript"
-                src="https://embedmaps.com/google-maps-authorization/script.js?id=352c676308b50158828fa7fe48afae0dc04d7c52"
-              ></script>
+            <MapComponent
+    lat={locationData.lat}
+    lng={locationData.lng}
+    locationName={locationData.toponymName || locationData.PlaceName || locationData.adminName1}
+  />
             </div>
           </div>
         </>
       ) : (
-        <>
-<iframe
-  src="https://www.google.com/maps?q=Solan,+Himachal+Pradesh,+India&z=12&output=embed"
-  width="520"
-  height="400"
-  allowfullscreen=""
-  loading="lazy">
-</iframe>
-          <iframe
-            className="w-full rounded-xl h-[500px]"
-            id="gmap_canvas"
-            src="https://maps.google.com/maps?width=520&amp;height=400&amp;hl=en&amp;q=Mauli%20Jagran%20Chandigarh+()&amp;t=&amp;z=12&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-          ></iframe>{" "}
-          <a href="https://www.acadoo.de/leistungen/ghostwriter-doktorarbeit/"></a>{" "}
-          <script
-            type="text/javascript"
-            src="https://embedmaps.com/google-maps-authorization/script.js?id=352c676308b50158828fa7fe48afae0dc04d7c52"
-          ></script>
+        <>   <div className="flex flex-col items-center justify-center min-h-full px-4">
+      <div className="text-center max-w-md">
+        {/* Icon */}
+        <div className="mb-6 flex justify-center">
+          <div className="bg-accent-primary rounded-full p-6">
+            <LocateFixedIcon 
+              size={64} 
+              className="text-[#45BBFF] opacity-50"
+            />
+          </div>
+        </div>
+        
+        {/* Heading */}
+        <h2 className="text-3xl font-semibold mb-3 text-white">
+          No Location Selected
+        </h2>
+        
+        {/* Description */}
+        <p className="text-lg text-gray-400 mb-6">
+          Search for a city or location above to view detailed information, population data, and fun facts.
+        </p>
+        
+        {/* Optional: Suggestion text */}
+        <div className="bg-accent-primary rounded-lg p-4 mt-4">
+          <p className="text-sm text-gray-300">
+            💡 Try searching for cities like <span className="text-[#45BBFF] font-medium">Mumbai</span>, 
+            <span className="text-[#45BBFF] font-medium"> Delhi</span>, or 
+            <span className="text-[#45BBFF] font-medium"> Bangalore</span>
+          </p>
+        </div>
+      </div>
+    </div>
         </>
       )}
     </div>

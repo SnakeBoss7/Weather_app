@@ -1,94 +1,66 @@
-const locInputData = async(req,res) =>
-    {
-      console.log('hi im backend');
-        const username = process.env.USERNAME_KEY;
-        const {locName} = req.body;
-        let url = isNaN(locName)?`https://secure.geonames.org/searchJSON?q=${locName}&featureClass=P&maxRows=10&username=${username}`:`https://secure.geonames.org/postalCodeSearchJSON?postalcode=${locName}&maxRows=10&username=${username}`       
-        let options =[];
-        try
-        {
-            let response = await fetch(url);
-            let locData = await response.json();
+const axios = require('axios'); // ADD THIS: npm install axios
+const { response } = require('express');
 
-            let locations = locData.geonames|| locData.postalCodes;
-            locations.forEach((loc,index)=>
-                {
-                    options.push(
-                        {
-                            label:(loc.toponymName || loc.postalCode )+ (loc.placeName ? (', '+loc.placeName):'') +', '+loc.adminName1 + ', ' +( loc.countryName || loc.countryCode),
-                            value:index
-                        })
-                    
-                })
+const USERNAME = process.env.USERNAME_KEY || null; // GeoNames username from env
+const Weath_key = process.env.WEATH_API || null; // GeoNames username from env
+if (!USERNAME) console.warn('Warning: USERNAME_KEY is not set in environment. GeoNames requests may fail.');
+// INPUT: Get location suggestions
+const locInputData = async (req, res) => {
+  const { locName } = req.body;
+  if (!locName) return res.status(400).json({ mess: 'locName required' });
 
+  const isPostal = !isNaN(locName);
+  const url = isPostal
+    ? `http://api.geonames.org/postalCodeSearchJSON?postalcode=${locName}&maxRows=10&username=${USERNAME}`
+    : `http://api.geonames.org/searchJSON?q=${encodeURIComponent(locName)}&featureClass=P&maxRows=10&username=${USERNAME}`;
 
-            res.json({options});
-        }catch(err)
-        {
-            console.log(err);
-            res.status(400).json({mess:'there some issue with geonames',error:err});
-        }
-    } 
-
-const locData = async (req, res) => {
-
-  const username = process.env.USERNAME_KEY;
-  const { location } = req.body;
-
-  if (!Array.isArray(location) || location.length < 2) {
-    return res.status(400).json({ error: 'Invalid location input' });
-  }
-
-  const nameOrPin = location[0];
-  const country = location[location.length - 1];
-  const adminName = location.length >= 3 ? location[1] : ''; 
-
-  const url = isNaN(nameOrPin)
-    ? `http://api.geonames.org/searchJSON?name_equals=${encodeURIComponent(nameOrPin)}&adminName1=${encodeURIComponent(adminName)}&maxRows=10&username=${username}`
-    : `https://secure.geonames.org/postalCodeSearchJSON?postalcode=${encodeURIComponent(nameOrPin)}&country=${encodeURIComponent(country)}&maxRows=10&username=${username}`;
-
+    // console.log({url})
   try {
-    const response = await fetch(url);
-    const locationsData = await response.json();
+    const response = await axios.get(url, { timeout: 8000 });
+    const data = response.data;
+    const locations = isPostal ? data.postalCodes : data.geonames || [];
+    const options = locations.map((loc, i) => ({
+      label: `${loc.toponymName || loc.postalCode || ''}${loc.placeName ? `, ${loc.placeName}` : ''}, ${loc.adminName1 || ''}, ${loc.countryName || loc.countryCode}`,
+      value: {lat:loc.lat,lng:loc.lng},
+    }));
 
-    let locationData = null;
-
-    if (isNaN(nameOrPin)) {
-      locationData = locationsData.geonames?.find(
-        (data) =>
-          data.adminName1?.trim().toLowerCase() === adminName.trim().toLowerCase()
-      );
-    } else {
-      locationData = locationsData.postalCodes?.find(
-        (data) =>
-          data.placeName?.trim().toLowerCase() === location[1].trim().toLowerCase()
-      );
-    }
-
-
-    return res.status(200).json({ locationData });
+    res.json({ options });
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: 'There was an issue with GeoNames API',
-      error: err.message || err,
-    });
+    console.error('GeoNames Error:', err.message);
+    res.status(500).json({ mess: 'GeoNames API failed', error: err.message });
   }
 };
+
+// GET: Final weather data
+const locData = async (req, res) => {
+  const { lat,lng } = req.body.location;
+
+const url = `  http://api.geonames.org/findNearbyPlaceNameJSON?lat=${lat}&lng=${lng}&username=${USERNAME}`
+
+  
+  try {
+    const response  = await axios.get(url, { timeout: 8000 });
+    const data =response.data.geonames[0];
+    const weatherUrl = `http://api.weatherapi.com/v1/forecast.json?key=${Weath_key}&q=${lat},${lng}&days=3&aqi=no&alerts=no`;
+    const weatherRes = await axios.get(weatherUrl);
+    res.json({ locationData: data, weather: weatherRes.data });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ mess: 'API Error', error: err.message });
+  }
+};
+
 const weathData = async (req, res) => {
-
-  let loc = encodeURIComponent(req.body.location.join(','));
-
-  try
-  {
-    let response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=453b48bde3544a35b6683930252803&q=${loc}&days=3&aqi=no&alerts=no`);
-    data = await response.json();
-
-    res.status(200).json({data});
-  }catch(err)
-  {
-    res.status(400).json({mess:"There's some issue with the weather api",err});
+  const {lat,lng} = req.body.location;
+  try {
+    const response = await axios.get(
+      `http://api.weatherapi.com/v1/forecast.json?key=${Weath_key}&q=${lat},${lng}&days=3&aqi=no&alerts=no`
+    );
+    console.log(response.data);
+    res.json({ data: response.data });
+  } catch (err) {
+    res.status(400).json({ mess: "Weather API failed", err: err.message });
   }
 };
 
-module.exports = { locData ,locInputData,weathData};
+module.exports = { locData, locInputData, weathData };
