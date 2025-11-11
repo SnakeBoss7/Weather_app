@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Home } from './pages/index';
 import City from './pages/outlets/city';

@@ -5,7 +5,7 @@ const getDataRoute = require('./routes/getData')
 const cors = require('cors');
 app.use(cors(
   {
-    origin: ['https://weather-app-one-tawny-64.vercel.app' ,'http://localhost:3000'],
+    origin: process.env.FRONTEND_URI,
   }));
 app.use(express.json());
 
