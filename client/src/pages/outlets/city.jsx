@@ -8,7 +8,7 @@ import Skeleton from "react-loading-skeleton";
 import MapComponent from "../../components/map";
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const City = () => {
+const City = ()  => {
   const { location } = useLocContext();
   const [locationData, setLocationData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
