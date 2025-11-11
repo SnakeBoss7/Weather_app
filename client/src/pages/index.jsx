@@ -21,7 +21,7 @@ export const Home = ()=>
                 }
                 window.addEventListener('resize',handleSidebar);
                 return () => {window.removeEventListener('resize',handleSidebar)}
-        },[])
+        },[setShowSidebar])
     return(
         <div className="flex h-full overflow-hidden w-full">
 
