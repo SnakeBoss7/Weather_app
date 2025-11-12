@@ -69,7 +69,7 @@ const WeatherPage = ({ handleOpac }) => {
 
     }
   return (
-  <div className="bg-primary overflow-y-scroll h-full md:overflow-hidden min-h-screen mb-10 w-full flex lg:flex-row flex-col">
+  <div className="bg-primary overflow-y-scroll h-full md:overflow-hidden min-h-screen mb-10 w-full lg:w-[85%] flex lg:flex-row flex-col">
       <div className="h-full flex flex-col lg:w-[75%] w-full p-3 ">
         <header className="w-full flex justify-between">
           <DropDown />

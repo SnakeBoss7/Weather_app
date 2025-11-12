@@ -169,7 +169,7 @@ const City = ()  => {
                 </p>
               </div>
             </div>
-            <div class="map w-full mb-[10px] sm:mb-0  min-h-[350px] rounded-xl bg-accent-primary p-3 md:w-[40%]">
+            <div class="map w-full mb-[10px] sm:mb-0  max-h-[350px] rounded-xl bg-accent-primary p-3 md:w-[40%]">
               <MapComponent
                 lat={locationData.lat}
                 lng={locationData.lng}
