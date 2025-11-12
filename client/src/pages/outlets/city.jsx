@@ -28,6 +28,7 @@ const City = ()  => {
         setAiResponse(aiRes.data.response);
         setLocationData(res.data.locationData);
         localStorage.setItem("locData", JSON.stringify(res.data.locationData));
+        localStorage.setItem("weath_data", JSON.stringify(res.data.weather));
         localStorage.setItem("aiRes", JSON.stringify(aiRes.data.response));
       } catch (err) {
         console.log(err);

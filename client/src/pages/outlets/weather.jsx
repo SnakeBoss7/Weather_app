@@ -31,10 +31,13 @@ const WeatherPage = ({ handleOpac }) => {
   useEffect(() => {
     const handleFetchData = async () => {
       try {
+        console.log("soilder wait")
         let res = await axios.post(`${apiUrl}/getdata/getWeathData`, {
           location,
         });
+        console.log("we here");
         setWeatherData(res.data.data);
+        console.log(res.data.data);
         localStorage.setItem("weath_data",JSON.stringify(res.data.data))
       } catch (err) {
         console.log(err);
