@@ -140,6 +140,7 @@ const MapComponent = ({ lat, lng, locationName }) => {
       const newLng = parseFloat(lng);
       if (!isNaN(newLat) && !isNaN(newLng)) {
         setCenter([newLat, newLng]);
+        setZoom(13); // Reset zoom when location changes
       }
     }
   }, [lat, lng]);
