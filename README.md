@@ -14,6 +14,23 @@ A small full-stack Weather application. The app has two main pages:
   - WeatherAPI (weatherapi.com) for forecast data
   - OpenAI (optional) for AI-generated fun facts and chat responses
 
+  ## Input handling & debounce
+
+The location search input uses a debounced fetch to avoid firing an API request on every keystroke. As the user types, the input waits a short delay (debounce window) and then sends a single request for suggestions — this reduces network traffic, improves perceived performance.
+
+
+## Screenshots
+
+
+
+Description: Location page — search box with autocompleted options, map, population, coordinates and an AI-generated fun fact.
+![Location page](/img/demo1.png)
+
+
+Description: Weather page — current conditions, 3-day forecast and the AI chatbot for weather-related questions and precautions.
+![Weather page](/img/demo2.png)
+
+
 ## Project structure (important files)
 
 - `client/` — React frontend
@@ -82,20 +99,3 @@ The client defaults to `http://localhost:3000` and the server origin is expected
 - `POST /getdata/weather` — accepts `{ location: [...] }` and returns weather data directly from WeatherAPI.
 
 (Exact route names reflect the app's `server/routes/getData.js` wiring.)
-
-## Troubleshooting
-
-- If `process.env.USERNAME_KEY` is `undefined` in `getDataController.js`, ensure `require('dotenv').config()` runs before routes are required — this project loads dotenv at the top of `server/app.js`.
-- If you see an OpenAI "Missing credentials" error on startup, add `NVIDIA_API_KEY` to `server/.env` or guard the LLM controller to skip AI calls when no key is present.
-- `server/package.json` `start` script may point to `index.js` by default; start the app with `node app.js` or update the script to `node app.js`.
-
-## Deployment
-
-- Ensure the production environment has the same environment variables set (USERNAME_KEY, WEATH_API, NVIDIA_API_KEY if used).
-- The client build is under `client/build` (or `build/` at repo root if prebuilt). Serve that as static assets or deploy the client separately (Vercel, Netlify).
-- For the server, deploy to any Node host (Heroku, Render, Railway, etc.) and set env vars in the host dashboard.
-
-## Development notes
-
-- Controllers currently read some env vars at module scope. If you prefer, move those reads into handlers so they pick up environment changes at runtime.
-- The AI features are optional — they provide fun facts on the Location page and power the Weather chat assistant.
