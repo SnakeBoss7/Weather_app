@@ -15,6 +15,7 @@ const Setting = ({handleOpac}) => {
             }
             else
             {
+                console.log("afdsfadfdfdsfafdsfafsdfafdsfasdfdsfadsfdsfasdfdsf")
                 console.log("Celsius");
                 
                 await setfaren(false);
