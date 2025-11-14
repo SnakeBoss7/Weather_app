@@ -27,11 +27,11 @@ const url = `  http://api.geonames.org/findNearbyPlaceNameJSON?lat=${lat}&lng=${
       messages: [
         {
           role: "system",
-          content: 'You are an expert in knowing the geolocation and funfact and general knowledge and you will be asked a question. Give answer strictly in less than 30 words. and only fact text no greeting of explanation' + `/no_think`,
+          content: `Tell me a fun fact about this location and wrap the fact part only fact part inside p tag and whole your response should have only 1 <p> tag and no other text` + "/no_think",
         },
         {
           role: "user",
-          content: `Tell me a fun fact about ${adminName1} ,${toponymName},${countryName}`,
+          content: ` ${adminName1} ,${toponymName},${countryName}`  ,
         },
       ],
       temperature: 0.6,
@@ -40,10 +40,11 @@ const url = `  http://api.geonames.org/findNearbyPlaceNameJSON?lat=${lat}&lng=${
       stream: false, // No streaming
     });
 
-   console.log(completion.choices[0].message.content);  // CORRECT
-    const answer = completion.choices?.[0]?.message?.content?.trim() || "No response from AI.";
+    let answer = completion.choices?.[0]?.message?.content?.trim() || "No response from AI.";
+    console.log(answer)
+    answer = answer.split("</think>")[1] ? answer.split("</think>")[1] : answer; 
+    console.log(answer)
     return res.status(200).json({ response: answer });
-
   } catch (error) {
     console.error('❌ Error in funFactAi:', error.response?.data || error.message);
     return res.status(500).json({ error: 'Failed to fetch fun fact from Together AI' });
@@ -71,7 +72,7 @@ const askTogetherAI = async (req, res) => {
     console.log('Chat history:', chat);
 
     // Enhanced system prompt with no_think instruction
-    const enhancedSystemPrompt = ` Keep answers under 10 words. Use HTML tags for formatting. Use <span style="color: #45BBFF"> for highlights. Use <strong> for emphasis. Keep it concise and well-structured. NO markdown, only HTML.` +'/no_think';
+    const enhancedSystemPrompt = ` Keep answers under 10 words. Use HTML tags for formatting. Use <span style="color: #45BBFF"> for highlights. Use <strong> for emphasis. Keep it concise and well-structured. NO markdown, only HTML.` ;
 
     // API call with error handling
     const completion = await openai_NVIDIA.chat.completions.create({
@@ -87,8 +88,11 @@ const askTogetherAI = async (req, res) => {
     });
 
     // Extract and format response
-    const aiMessage = completion.choices[0]?.message?.content?.trim();
-    
+    let aiMessage = completion.choices[0]?.message?.content?.trim();
+    aiMessage = aiMessage.split("</think>")[1];
+    aiMessage = aiMessage.replaceAll("\n","");
+    console.log(aiMessage)
+
     if (!aiMessage) {
       return res.status(500).json({ 
         response: '<p style="color: #ff9800;">AI returned empty response. Please try again.</p>' 

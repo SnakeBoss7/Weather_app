@@ -49,7 +49,7 @@ const City = ()  => {
     }
   }, [location]);
   return (
-    <div className="bg-primary overflow-y-scroll md:overflow-hidden min-h-screen p-3 sm:h-full w-full lg:w-[85%] flex flex-col">
+    <div className="bg-primary overflow-y-scroll hide-scrollbar min-h-screen p-6 sm:h-full w-full lg:w-[85%] flex flex-col">
       <header className="w-full flex justify-between w-full">
         <DropDown />
         <Checkbox />
@@ -127,6 +127,7 @@ const City = ()  => {
                   </div>
                   <p className="text-2xl tracking-tight text-zinc-300">
                     {locationData.lng}
+                    
                   </p>
                 </div>
                 <div className=" p-4 rounded bg-accent-primary rounded-xl flex flex-col gap-2">
@@ -165,8 +166,9 @@ const City = ()  => {
                   />
                   Fun Fact
                 </h1>
-                <p className="tracking-tight md:text-xl text-md text-zinc-300">
-                  {aiResponse}
+                <p className="tracking-tight md:text-xl text-md text-zinc-300"
+                    dangerouslySetInnerHTML={{ __html: aiResponse }}
+                >
                 </p>
               </div>
             </div>

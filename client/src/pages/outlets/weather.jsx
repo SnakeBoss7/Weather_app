@@ -276,7 +276,7 @@ const WeatherPage = ({ handleOpac }) => {
             ))}
             {isLoading && (
               <div className="flex justify-start">
-                <div className="bg-primary p-3 rounded-lg">
+                <div className="bg-primary p-6 rounded-lg">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
